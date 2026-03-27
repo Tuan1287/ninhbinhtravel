@@ -6,50 +6,69 @@
     <title>Ninh Bình AI - Trợ lý du lịch</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .typing-cursor::after { content: "|"; animation: blink 0.7s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        #chat-container { scroll-behavior: smooth; max-height: 60vh; overflow-y: auto; }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
 
-    <header class="p-4 flex justify-between items-center bg-white border-b">
-        <div class="flex items-center space-x-2">
-            <h1 class="text-xl font-bold text-emerald-700">Ninh Bình AI</h1>
-            <span class="text-xs text-gray-400">TRỢ LÝ DU LỊCH</span>
+    <div id="api-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-2xl max-w-md w-full mx-4 shadow-2xl">
+            <h3 class="text-2xl font-bold mb-4" id="modal-title">Cấu hình API Gemini</h3>
+            <p class="text-sm text-gray-600 mb-6" id="modal-desc">
+                Để bắt đầu, bạn cần có API Key từ Google AI Studio. <br>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-emerald-600 underline">Nhấn vào đây để lấy Key miễn phí.</a>
+            </p>
+            <input type="password" id="api-input" placeholder="Dán API Key của bạn vào đây..." 
+                class="w-full p-3 border rounded-lg mb-4 focus:ring-2 focus:ring-emerald-500 outline-none">
+            <button onclick="saveApiKey()" class="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700 transition">Bắt đầu ngay</button>
         </div>
-        <div class="flex space-x-2">
-            <button onclick="clearChat()" class="p-2 text-red-500 hover:bg-red-50" title="Xóa lịch sử"><i class="fas fa-trash"></i></button>
-            <button onclick="changeAPI()" class="p-2 text-amber-500 hover:bg-amber-50" title="Đổi API Key"><i class="fas fa-key"></i></button>
-            <button onclick="toggleLang()" id="langBtn" class="px-3 py-1 border rounded hover:bg-gray-100 font-medium">EN</button>
+    </div>
+
+    <header class="p-4 flex justify-between items-center bg-white border-b sticky top-0 z-10">
+        <div class="flex items-center space-x-2 cursor-pointer" onclick="goHome()">
+            <h1 class="text-xl font-bold text-emerald-700">Ninh Bình AI</h1>
+            <span class="text-xs text-gray-400 hidden sm:block" id="header-subtitle">TRỢ LÝ DU LỊCH</span>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button onclick="clearChat()" class="p-2 text-red-500 hover:bg-red-50 rounded-full" title="Xóa hội thoại"><i class="fas fa-trash-alt"></i></button>
+            <button onclick="showApiModal()" class="p-2 text-amber-500 hover:bg-amber-50 rounded-full"><i class="fas fa-key"></i></button>
+            <button onclick="toggleLang()" id="langBtn" class="px-4 py-1 border-2 border-emerald-600 text-emerald-600 rounded-full font-bold hover:bg-emerald-600 hover:text-white transition">EN</button>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto p-6">
+    <main class="max-w-4xl mx-auto p-6 pb-32">
         <div id="welcome-screen" class="mt-10">
-            <h2 class="text-5xl font-serif font-bold mb-2">Chào mừng đến</h2>
+            <h2 class="text-5xl font-serif font-bold mb-2" id="welcome-text">Chào mừng đến</h2>
             <h2 class="text-5xl font-serif italic text-gray-400 mb-8">Ninh Bình</h2>
             <p class="text-gray-500 mb-10" id="sub-title">Hỏi tôi về địa điểm tham quan, lịch trình, ăn uống... bất kỳ điều gì cho chuyến đi của bạn.</p>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div onclick="askAI('Lịch trình 2 ngày 1 đêm')" class="p-4 bg-white border rounded-xl cursor-pointer hover:shadow-md transition">
-                    <i class="fas fa-calendar-alt text-orange-500 mb-2"></i>
-                    <h3 class="font-bold">Lịch trình 2 ngày 1 đêm</h3>
-                    <p class="text-sm text-gray-400">Cho cặp đôi / gia đình</p>
+                <div onclick="askAI(translations[currentLang].sug1)" class="p-5 bg-white border-2 border-transparent hover:border-emerald-200 rounded-2xl cursor-pointer shadow-sm hover:shadow-md transition">
+                    <i class="fas fa-map-marked-alt text-orange-500 text-2xl mb-3"></i>
+                    <h3 class="font-bold" id="sug1-title">Lịch trình 2 ngày 1 đêm</h3>
+                    <p class="text-sm text-gray-400" id="sug1-desc">Tối ưu thời gian check-in/out</p>
                 </div>
-                <div onclick="askAI('Quán ăn ngon tối nay tại Phố cổ')" class="p-4 bg-white border rounded-xl cursor-pointer hover:shadow-md transition">
-                    <i class="fas fa-utensils text-red-500 mb-2"></i>
-                    <h3 class="font-bold">Đặc sản không bỏ qua</h3>
-                    <p class="text-sm text-gray-400">Heo say xỉn, cơm cháy...</p>
+                <div onclick="askAI(translations[currentLang].sug2)" class="p-5 bg-white border-2 border-transparent hover:border-emerald-200 rounded-2xl cursor-pointer shadow-sm hover:shadow-md transition">
+                    <i class="fas fa-utensils text-red-500 text-2xl mb-3"></i>
+                    <h3 class="font-bold" id="sug2-title">Ăn gì buổi tối?</h3>
+                    <p class="text-sm text-gray-400" id="sug2-desc">Gợi ý Heo say xỉn, Lẩu gà lá é</p>
                 </div>
             </div>
         </div>
 
-        <div id="chat-container" class="hidden mt-6 space-y-4"></div>
+        <div id="chat-container" class="hidden space-y-6 pt-4"></div>
     </main>
 
-    <div class="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white via-white">
-        <div class="max-w-4xl mx-auto relative">
-            <input type="text" id="userInput" placeholder="Hỏi về địa điểm, lịch trình..." 
-                class="w-full p-4 pr-16 border rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-            <button onclick="handleSend()" class="absolute right-3 top-3 bg-black text-white p-2 rounded-full w-10 h-10 flex items-center justify-center">
-                <i class="fas fa-paper-plane text-sm"></i>
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white via-white to-transparent">
+        <div class="max-w-4xl mx-auto relative group">
+            <input type="text" id="userInput" placeholder="Nhập câu hỏi tại đây..." 
+                class="w-full p-4 pr-16 border-2 border-gray-200 rounded-2xl shadow-lg focus:outline-none focus:border-emerald-500 transition-all"
+                onkeypress="if(event.key === 'Enter') handleSend()">
+            <button onclick="handleSend()" class="absolute right-3 top-3 bg-emerald-600 text-white p-2 rounded-xl w-10 h-10 flex items-center justify-center hover:bg-emerald-700 transition">
+                <i class="fas fa-paper-plane"></i>
             </button>
         </div>
     </div>
@@ -58,12 +77,96 @@
         let apiKey = localStorage.getItem('gemini_api_key') || '';
         let currentLang = 'vi';
 
-        function changeAPI() {
-            const key = prompt("Nhập Gemini API Key của bạn:", apiKey);
-            if (key) {
-                apiKey = key;
-                localStorage.setItem('gemini_api_key', key);
+        const translations = {
+            vi: {
+                welcome: "Chào mừng đến",
+                sub: "Hỏi tôi về địa điểm tham quan, lịch trình, ăn uống...",
+                inputPlace: "Nhập câu hỏi tại đây...",
+                headerSub: "TRỢ LÝ DU LỊCH",
+                sug1: "Thiết kế lịch trình 2 ngày 1 đêm ưu tiên Tràng An, Hang Múa, Hoa Lư",
+                sug1T: "Lịch trình 2 ngày 1 đêm",
+                sug1D: "Tối ưu thời gian check-in/out",
+                sug2: "Gợi ý quán ăn buổi tối khu vực Phố cổ Hoa Lư và quà lưu niệm",
+                sug2T: "Ăn gì buổi tối?",
+                sug2D: "Gợi ý Heo say xỉn, Lẩu gà lá é",
+                modalT: "Cấu hình API Gemini",
+                modalD: "Để bắt đầu, bạn cần có API Key từ Google AI Studio. <br> <a href='https://aistudio.google.com/app/apikey' target='_blank' class='text-emerald-600 underline'>Nhấn vào đây để lấy Key miễn phí.</a>",
+                error: "Lỗi kết nối. Vui lòng kiểm tra API Key."
+            },
+            en: {
+                welcome: "Welcome to",
+                sub: "Ask me about sightseeing, itineraries, food...",
+                inputPlace: "Type your question here...",
+                headerSub: "TRAVEL ASSISTANT",
+                sug1: "Design a 2D1N itinerary prioritizing Trang An, Hang Mua, Hoa Lu",
+                sug1T: "2D1N Itinerary",
+                sug1D: "Optimized for check-in/out",
+                sug2: "Dinner recommendations in Hoa Lu Ancient Town and souvenirs",
+                sug2T: "Where to eat tonight?",
+                sug2D: "Heo say xin, Chicken Hotpot",
+                modalT: "Configure Gemini API",
+                modalD: "To start, you need an API Key from Google AI Studio. <br> <a href='https://aistudio.google.com/app/apikey' target='_blank' class='text-emerald-600 underline'>Click here to get a free key.</a>",
+                error: "Connection error. Please check your API Key."
             }
+        };
+
+        window.onload = () => {
+            if (!apiKey) showApiModal();
+            updateUILanguage();
+        };
+
+        function showApiModal() { document.getElementById('api-modal').classList.remove('hidden'); }
+        
+        function saveApiKey() {
+            const input = document.getElementById('api-input').value;
+            if (input) {
+                apiKey = input;
+                localStorage.setItem('gemini_api_key', apiKey);
+                document.getElementById('api-modal').classList.add('hidden');
+            }
+        }
+
+        function goHome() {
+            document.getElementById('chat-container').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'vi' ? 'en' : 'vi';
+            document.getElementById('langBtn').innerText = currentLang === 'vi' ? 'EN' : 'VI';
+            updateUILanguage();
+        }
+
+        function updateUILanguage() {
+            const t = translations[currentLang];
+            document.getElementById('welcome-text').innerText = t.welcome;
+            document.getElementById('sub-title').innerText = t.sub;
+            document.getElementById('userInput').placeholder = t.inputPlace;
+            document.getElementById('header-subtitle').innerText = t.headerSub;
+            document.getElementById('sug1-title').innerText = t.sug1T;
+            document.getElementById('sug1-desc').innerText = t.sug1D;
+            document.getElementById('sug2-title').innerText = t.sug2T;
+            document.getElementById('sug2-desc').innerText = t.sug2D;
+            document.getElementById('modal-title').innerText = t.modalT;
+            document.getElementById('modal-desc').innerHTML = t.modalD;
+        }
+
+        async function typeWriter(text, element) {
+            let i = 0;
+            element.innerHTML = "";
+            element.classList.add('typing-cursor');
+            function type() {
+                if (i < text.length) {
+                    let char = text.charAt(i);
+                    element.innerHTML += char === '\n' ? '<br>' : char;
+                    i++;
+                    setTimeout(type, 15);
+                    document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
+                } else {
+                    element.classList.remove('typing-cursor');
+                }
+            }
+            type();
         }
 
         async function askAI(question) {
@@ -71,52 +174,47 @@
             const container = document.getElementById('chat-container');
             container.classList.remove('hidden');
             
-            // Hiển thị câu hỏi của user
-            container.innerHTML += `<div class="text-right"><span class="inline-block bg-emerald-100 p-3 rounded-lg">${question}</span></div>`;
+            container.innerHTML += `<div class="flex justify-end"><div class="bg-emerald-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[80%] shadow-sm">${question}</div></div>`;
             
-            if (!apiKey) {
-                alert("Vui lòng nhập API Key trước!");
-                changeAPI();
-                return;
-            }
+            const aiResponseDiv = document.createElement('div');
+            aiResponseDiv.className = "flex justify-start";
+            aiResponseDiv.innerHTML = `<div class="bg-white border p-4 rounded-2xl rounded-tl-none max-w-[80%] shadow-sm content-area text-gray-700 leading-relaxed">...</div>`;
+            container.appendChild(aiResponseDiv);
 
-            // Gọi API Gemini (Sử dụng fetch)
+            const contentElement = aiResponseDiv.querySelector('.content-area');
+
             try {
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Bạn là trợ lý du lịch Ninh Bình. Ngôn ngữ: ${currentLang}. 
-                        Quy tắc: Check-in 14h, Check-out 12h. Ưu tiên: Tràng An, Hang Múa, Phố Cổ Hoa Lư. 
-                        Ăn uống: Quán Heo say xỉn, Lẩu gà lá é Phố Cổ. Quà: Cơm cháy Đại Long (325A Lê Thái Tổ). 
-                        Khách sạn: Legend, The Reed, Milan Hotel. Câu hỏi: ${question}` }] }]
+                        contents: [{ parts: [{ text: `System: Bạn là chuyên gia du lịch Ninh Bình. Trả lời bằng ngôn ngữ: ${currentLang}. 
+                        Lưu ý: Check-in 14:00, Check-out 12:00. Ưu tiên: Tràng An, Hang Múa, Hoa Lư. 
+                        Ăn tối: Quán Heo say xỉn, Lẩu gà lá é khu Phố cổ. 
+                        Quà: Cơm cháy Đại Long (325A Lê Thái Tổ). 
+                        Khách sạn: Legend (4-5*), The Reed (4*), Milan (Budget). 
+                        Câu hỏi: ${question}` }] }]
                     })
                 });
                 const data = await response.json();
                 const aiText = data.candidates[0].content.parts[0].text;
-                container.innerHTML += `<div class="text-left"><span class="inline-block bg-white border p-3 rounded-lg shadow-sm">${aiText.replace(/\n/g, '<br>')}</span></div>`;
+                await typeWriter(aiText, contentElement);
             } catch (error) {
-                container.innerHTML += `<div class="text-red-500">Lỗi kết nối API. Hãy kiểm tra lại Key.</div>`;
+                contentElement.innerText = translations[currentLang].error;
+            }
+        }
+
+        function handleSend() {
+            const input = document.getElementById('userInput');
+            if (input.value.trim()) {
+                askAI(input.value);
+                input.value = '';
             }
         }
 
         function clearChat() {
             document.getElementById('chat-container').innerHTML = '';
-            document.getElementById('welcome-screen').classList.remove('hidden');
-        }
-
-        function toggleLang() {
-            currentLang = currentLang === 'vi' ? 'en' : 'vi';
-            document.getElementById('langBtn').innerText = currentLang === 'vi' ? 'EN' : 'VI';
-            // Cập nhật text giao diện tùy theo ngôn ngữ tại đây
-        }
-
-        function handleSend() {
-            const input = document.getElementById('userInput');
-            if (input.value) {
-                askAI(input.value);
-                input.value = '';
-            }
+            goHome();
         }
     </script>
 </body>
