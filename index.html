@@ -170,57 +170,77 @@
         }
 
         async function askAI(question) {
+    // 1. Ẩn màn hình chào, hiện khung chat
     document.getElementById('welcome-screen').classList.add('hidden');
     const container = document.getElementById('chat-container');
     container.classList.remove('hidden');
     
-    // Hiển thị câu hỏi của người dùng
-    container.innerHTML += `<div class="flex justify-end"><div class="bg-emerald-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[80%] shadow-sm">${question}</div></div>`;
+    // 2. Hiển thị câu hỏi của bạn
+    container.innerHTML += `<div class="flex justify-end mb-4"><div class="bg-emerald-600 text-white p-4 rounded-2xl rounded-tr-none max-w-[80%] shadow-sm animate-fade-in">${question}</div></div>`;
     
+    // 3. Tạo box chờ câu trả lời của AI
     const aiResponseDiv = document.createElement('div');
-    aiResponseDiv.className = "flex justify-start";
-    aiResponseDiv.innerHTML = `<div class="bg-white border p-4 rounded-2xl rounded-tl-none max-w-[80%] shadow-sm content-area text-gray-700 leading-relaxed">...</div>`;
+    aiResponseDiv.className = "flex justify-start mb-4";
+    aiResponseDiv.innerHTML = `<div class="bg-white border p-4 rounded-2xl rounded-tl-none max-w-[85%] shadow-sm content-area text-gray-700 leading-relaxed min-h-[50px]"><span class="typing-dots">...</span></div>`;
     container.appendChild(aiResponseDiv);
-
     const contentElement = aiResponseDiv.querySelector('.content-area');
 
-    try {
-        // URL CHÍNH XÁC: Phải có :generateContent ở cuối
-        const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // 4. Cuộn xuống dưới cùng
+    container.scrollTop = container.scrollHeight;
 
-        const response = await fetch(apiUrl, {
+    try {
+        // Sử dụng phiên bản v1 ổn định
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ 
-                    parts: [{ 
-                        text: `Bạn là trợ lý du lịch Ninh Bình chuyên nghiệp. Ngôn ngữ trả lời: ${currentLang}. 
-                        QUY TẮC LỊCH TRÌNH: Check-in sau 14h, Check-out trước 12h. 
-                        ĐỊA ĐIỂM ƯU TIÊN: Tràng An, Hang Múa, Phố Cổ Hoa Lư. 
-                        ẨM THỰC BUỔI TỐI: Ưu tiên Quán Heo say xỉn, Lẩu gà lá é khu Phố cổ. 
-                        QUÀ LƯU NIỆM: Cơm cháy Đại Long (325A Lê Thái Tổ). 
-                        LƯU TRÚ: Khách sạn Legend, The Reed, Milan Hotel. 
-                        CÂU HỎI: ${question}` 
-                    }] 
-                }]
+                contents: [{ parts: [{ text: `System: Bạn là trợ lý du lịch Ninh Bình chuyên nghiệp. Ngôn ngữ: ${currentLang}. 
+                Quy tắc: Check-in 14h, Check-out 12h. Ưu tiên: Tràng An, Hang Múa, Hoa Lư. 
+                Ăn uống: Quán Heo say xỉn, Lẩu gà lá é Phố cổ. Quà: Cơm cháy Đại Long (325A Lê Thái Tổ). 
+                Lưu trú: Legend, The Reed, Milan Hotel. Câu hỏi: ${question}` }] }]
             })
         });
 
         const data = await response.json();
 
-        // Kiểm tra nếu API trả về lỗi chi tiết
         if (data.error) {
-            contentElement.innerText = "Lỗi từ Google: " + data.error.message;
+            contentElement.innerHTML = `<span class="text-red-500">Lỗi: ${data.error.message}</span>`;
             return;
         }
 
         const aiText = data.candidates[0].content.parts[0].text;
+        
+        // Gọi hiệu ứng đánh máy (typing)
         await typeWriter(aiText, contentElement);
 
     } catch (error) {
-        console.error("Chi tiết lỗi:", error);
-        contentElement.innerText = "Không thể kết nối tới máy chủ AI. Vui lòng kiểm tra lại mạng hoặc API Key.";
+        contentElement.innerText = "Lỗi kết nối máy chủ AI. Hãy kiểm tra lại API Key hoặc mạng internet.";
     }
+}
+
+// Hàm tạo hiệu ứng đánh máy
+async function typeWriter(text, element) {
+    let i = 0;
+    element.innerHTML = ""; // Xóa dấu ...
+    element.classList.add('typing-cursor');
+    
+    return new Promise((resolve) => {
+        function type() {
+            if (i < text.length) {
+                let char = text.charAt(i);
+                element.innerHTML += char === '\n' ? '<br>' : char;
+                i++;
+                // Cuộn theo chữ đang hiện ra
+                const container = document.getElementById('chat-container');
+                container.scrollTop = container.scrollHeight;
+                setTimeout(type, 15); // Tốc độ 15ms
+            } else {
+                element.classList.remove('typing-cursor');
+                resolve();
+            }
+        }
+        type();
+    });
 }
 
         function handleSend() {
