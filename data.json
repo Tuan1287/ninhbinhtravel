@@ -1,0 +1,25 @@
+{
+  "locations": [
+    {
+      "name": "Tràng An",
+      "type": "sightseeing",
+      "description": "Di sản văn hóa và thiên nhiên thế giới, nên đi thuyền tuyến 2 hoặc 3.",
+      "map_link": "https://goo.gl/maps/xyz",
+      "priority": true
+    },
+    {
+      "name": "Nhà hàng Heo Say Xỉn",
+      "type": "dining",
+      "description": "Chuyên các món heo mán, lợn nướng giả cầy, không gian phố cổ.",
+      "address": "Phố cổ Hoa Lư",
+      "priority": true
+    },
+    {
+      "name": "Khách sạn Legend",
+      "type": "accommodation",
+      "description": "Tiêu chuẩn 4-5 sao, có bể bơi và buffet sáng đa dạng.",
+      "price_range": "1.2tr - 2.5tr",
+      "priority": true
+    }
+  ]
+}
