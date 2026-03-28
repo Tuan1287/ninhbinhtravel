@@ -4,19 +4,19 @@
       "name": "Tràng An",
       "type": "sightseeing",
       "tags": ["thuyền", "hang động", "đẹp", "di sản"],
-      "hidden_note": "Điểm sáng nhất Ninh Bình. Tuyến 2 có phim trường Kong rất hợp chụp ảnh. Nên nhắc khách đi sớm để cảm nhận sự yên tĩnh."
+      "hidden_note": "Điểm sáng nhất Ninh Bình. Tuyến 2 có phim trường Kong rất hợp chụp ảnh. Nên nhắc khách đi sớm."
     },
     {
       "name": "Nhà hàng Heo say xỉn",
       "type": "dining",
-      "tags": ["ăn tối", "heo mán", "phố cổ"],
-      "hidden_note": "Chuyên heo mán nướng cực thơm, vị đậm đà. Không gian trong Phố Cổ Hoa Lư rất đẹp về đêm, phù hợp để thư giãn sau ngày dài leo núi."
+      "tags": ["ăn tối", "heo mán", "phố cổ", "ngon"],
+      "hidden_note": "Chuyên heo mán nướng cực thơm. Không gian trong Phố Cổ Hoa Lư rất đẹp về đêm, cực kỳ chill."
     },
     {
       "name": "Cơm cháy Đại Long",
       "type": "souvenir",
       "tags": ["quà", "đặc sản", "cơm cháy"],
-      "hidden_note": "Xưởng lớn tại 325A Lê Thái Tổ. Cơm cháy giòn, không bị hôi dầu, bao bì lịch sự để làm quà biếu."
+      "hidden_note": "Xưởng lớn tại 325A Lê Thái Tổ. Cơm cháy giòn, uy tín nhất để làm quà."
     }
   ]
 }
