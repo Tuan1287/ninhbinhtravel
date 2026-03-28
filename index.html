@@ -3,79 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ninh Bình AI - Local Guide</title>
+    <title>Ninh Bình AI - Local Insider</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; background-color: #f8fafc; }
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        body { font-family: 'Quicksand', sans-serif; height: 100vh; overflow: hidden; display: flex; flex-direction: column; background-color: #f0f4f8; }
         #chat-window::-webkit-scrollbar { width: 4px; }
-        #chat-window::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-        .map-container { width: 100%; height: 280px; border-radius: 16px; overflow: hidden; margin-top: 10px; border: 1px solid #e2e8f0; }
+        #chat-window::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .map-frame { width: 100%; height: 280px; border-radius: 18px; border: 2px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 15px; }
+        .chat-bubble { transition: all 0.3s ease; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <div id="api-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60] hidden p-4">
-        <div class="bg-white p-6 rounded-3xl max-w-sm w-full shadow-2xl text-center">
-            <h3 class="text-lg font-bold mb-4" id="modal-title">Cấu hình API Gemini</h3>
-            <input type="password" id="api-input" placeholder="Dán API Key..." 
-                class="w-full p-4 border rounded-2xl mb-4 outline-none focus:ring-2 focus:ring-emerald-500 text-center">
-            <button onclick="saveApiKey()" class="w-full bg-emerald-600 text-white py-3.5 rounded-2xl font-bold hover:bg-emerald-700 transition-all">Bắt đầu ngay</button>
+    <div id="api-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-[60] hidden p-4">
+        <div class="bg-white p-8 rounded-[30px] max-w-sm w-full shadow-2xl text-center">
+            <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <i class="fas fa-key text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2" id="m-title">Kết nối Gemini AI</h3>
+            <p class="text-sm text-slate-500 mb-6" id="m-desc">Nhập API Key để bắt đầu trò chuyện cùng trợ lý bản địa.</p>
+            <input type="password" id="api-input" placeholder="..." class="w-full p-4 border-2 border-slate-100 rounded-2xl mb-4 outline-none focus:border-emerald-500 text-center transition-all">
+            <button onclick="saveApiKey()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-200">Kích hoạt hệ thống</button>
         </div>
     </div>
 
-    <header class="h-16 flex justify-between items-center bg-white border-b px-4 sm:px-8 shrink-0 shadow-sm z-50">
-        <div class="flex items-center space-x-3">
-            <div class="cursor-pointer" onclick="goHome()">
-                <h1 class="text-base font-bold text-emerald-700 leading-none">Ninh Bình AI</h1>
-                <span class="text-[8px] text-slate-400 uppercase font-bold tracking-tighter" id="header-tag">Local Guide</span>
+    <header class="h-20 flex justify-between items-center bg-white/80 backdrop-blur-md border-b px-6 shrink-0 z-50">
+        <div class="flex items-center space-x-4">
+            <div class="cursor-pointer group" onclick="goHome()">
+                <h1 class="text-xl font-bold text-emerald-700 leading-none">Ninh Bình AI</h1>
+                <span id="h-tag" class="text-[10px] text-slate-400 font-bold tracking-widest uppercase">Người bạn bản địa</span>
             </div>
-            <div class="flex items-center bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 shadow-sm">
-                <span class="text-sm mr-1.5">⛅</span>
-                <div id="temp-display" class="text-[10px] font-bold text-emerald-700 uppercase">26°C | Đẹp</div>
+            <div class="hidden sm:flex items-center bg-white px-3 py-1.5 rounded-full border shadow-sm">
+                <span class="mr-2">⛅</span>
+                <span class="text-xs font-bold text-slate-600">26°C | Ninh Bình</span>
             </div>
         </div>
-        <div class="flex items-center space-x-2">
-            <button onclick="clearChat()" class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition" title="Xóa hội thoại">
+        
+        <div class="flex items-center space-x-3">
+            <button onclick="clearChat()" class="w-10 h-10 flex items-center justify-center text-red-500 bg-red-50 rounded-full hover:bg-red-100 transition shadow-sm" title="Xóa hội thoại">
                 <i class="fas fa-trash-alt"></i>
             </button>
-            <button onclick="showApiModal()" class="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition" title="Đổi API">
+            <button onclick="showApiModal()" class="w-10 h-10 flex items-center justify-center text-amber-500 bg-amber-50 rounded-full hover:bg-amber-100 transition shadow-sm" title="Cấu hình">
                 <i class="fas fa-key"></i>
             </button>
-            <button onclick="toggleLang()" id="langBtn" class="ml-2 px-3 py-1 border-2 border-emerald-600 text-emerald-600 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white transition">EN</button>
+            <button onclick="toggleLang()" id="langBtn" class="px-5 py-2 border-2 border-emerald-600 text-emerald-600 rounded-full text-xs font-bold hover:bg-emerald-600 hover:text-white transition shadow-md">EN</button>
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto w-full relative flex-1 flex flex-col overflow-hidden">
-        <div id="chat-window" class="flex-1 overflow-y-auto px-4 pt-4 pb-32">
-            <div id="welcome-screen" class="py-10 text-center">
-                <h2 class="text-3xl font-bold mb-8 text-slate-900" id="welcome-text">Bạn cần hỗ trợ gì tại Ninh Bình?</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div onclick="askAI(translations[currentLang].sug1)" class="p-5 bg-white border border-slate-200 rounded-2xl cursor-pointer hover:border-emerald-500 hover:shadow-md transition-all text-left">
-                        <i class="fas fa-map-marked-alt text-emerald-600 mb-2"></i>
-                        <h3 class="font-bold text-sm" id="sug1-title">Lịch trình 2N1Đ</h3>
-                        <p class="text-[10px] text-slate-400 mt-1" id="sug1-desc">Kèm bản đồ chỉ đường bộ.</p>
+    <main class="max-w-4xl mx-auto w-full relative flex-1 flex flex-col overflow-hidden">
+        <div id="chat-window" class="flex-1 overflow-y-auto px-4 pt-6 pb-36">
+            <div id="welcome-screen" class="py-10 text-center animate-fade-in">
+                <div class="mb-6 inline-block p-4 bg-emerald-50 rounded-full">
+                    <i class="fas fa-map-marker-alt text-3xl text-emerald-600"></i>
+                </div>
+                <h2 id="w-text" class="text-3xl font-bold mb-10 text-slate-800">Chào bạn, hôm nay chúng ta khám phá gì tại Ninh Bình?</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
+                    <div onclick="askAI(translations[currentLang].sug1)" class="p-6 bg-white rounded-[25px] border-2 border-transparent hover:border-emerald-500 shadow-sm hover:shadow-xl transition-all text-left cursor-pointer group">
+                        <i class="fas fa-route text-emerald-500 mb-3 text-2xl group-hover:scale-110 transition"></i>
+                        <h3 id="s1-t" class="font-bold text-slate-800">Lịch trình chuyên gia</h3>
+                        <p id="s1-d" class="text-xs text-slate-400 mt-2">Tối ưu thời gian & bản đồ chỉ đường.</p>
                     </div>
-                    <div onclick="askAI(translations[currentLang].sug2)" class="p-5 bg-white border border-slate-200 rounded-2xl cursor-pointer hover:border-orange-500 hover:shadow-md transition-all text-left">
-                        <i class="fas fa-utensils text-orange-500 mb-2"></i>
-                        <h3 class="font-bold text-sm" id="sug2-title">Ăn uống & Đặc sản</h3>
-                        <p class="text-[10px] text-slate-400 mt-1" id="sug2-desc">Địa điểm từ dân bản địa.</p>
+                    <div onclick="askAI(translations[currentLang].sug2)" class="p-6 bg-white rounded-[25px] border-2 border-transparent hover:border-orange-500 shadow-sm hover:shadow-xl transition-all text-left cursor-pointer group">
+                        <i class="fas fa-utensils text-orange-500 mb-3 text-2xl group-hover:scale-110 transition"></i>
+                        <h3 id="s2-t" class="font-bold text-slate-800">Ẩm thực & Quà tặng</h3>
+                        <p id="s2-d" class="text-xs text-slate-400 mt-2">Quán ăn ngon & Đặc sản chính hiệu.</p>
                     </div>
                 </div>
             </div>
-            <div id="chat-container" class="space-y-6"></div>
+            <div id="chat-container" class="space-y-8"></div>
         </div>
 
-        <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent">
-            <div class="relative max-w-2xl mx-auto shadow-xl rounded-2xl border border-white overflow-hidden bg-white ring-1 ring-slate-200">
-                <input type="text" id="userInput" placeholder="Hỏi mình..." 
-                    class="w-full p-4 pr-16 focus:outline-none text-sm"
+        <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-f0f4f8 via-f0f4f8 to-transparent">
+            <div class="max-w-2xl mx-auto relative shadow-2xl rounded-[28px] bg-white border border-white ring-1 ring-slate-200 p-2">
+                <input type="text" id="userInput" placeholder="Nhập tin nhắn..." 
+                    class="w-full p-4 pr-16 focus:outline-none text-[15px] font-medium"
                     onkeypress="if(event.key === 'Enter') handleSend()">
-                <button onclick="handleSend()" class="absolute right-2 top-2 bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-paper-plane text-xs"></i>
+                <button onclick="handleSend()" class="absolute right-3 top-3 bg-emerald-600 text-white w-12 h-12 rounded-[22px] flex items-center justify-center hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition-all">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
@@ -87,42 +95,48 @@
 
         const translations = {
             vi: {
-                welcome: "Bạn cần hỗ trợ gì tại Ninh Bình?",
-                inputPlace: "Hỏi mình bất cứ điều gì...",
-                headerTag: "Chuyên gia bản địa",
-                sug1: "Lịch trình 2 ngày 1 đêm tối ưu, check-in 14h, check-out 12h, có bản đồ.",
-                sug1T: "Lịch trình 2N1Đ",
-                sug1D: "Kèm bản đồ chỉ đường bộ.",
-                sug2: "Gợi ý quán ăn tối và quà tặng cơm cháy uy tín.",
-                sug2T: "Ăn uống & Đặc sản",
-                sug2D: "Địa điểm từ dân bản địa.",
-                thinking: "Đang xử lý...",
-                mapBtn: "Mở trên Google Maps"
+                wText: "Chào bạn, hôm nay chúng ta khám phá gì tại Ninh Bình?",
+                hTag: "Người bạn bản địa",
+                iPlace: "Hỏi mình bất cứ điều gì...",
+                mTitle: "Kết nối Gemini AI",
+                mDesc: "Nhập API Key để bắt đầu trò chuyện cùng trợ lý bản địa.",
+                sug1: "Chào bạn, mình muốn nhờ bạn tư vấn một lịch trình 2 ngày 1 đêm tại Ninh Bình thật trọn vẹn, có lưu ý cả giờ check-in/out khách sạn nhé.",
+                sug1T: "Lịch trình chuyên gia",
+                sug1D: "Tối ưu thời gian & bản đồ chỉ đường.",
+                sug2: "Tư vấn giúp mình các quán ăn đặc sản và chỗ mua cơm cháy uy tín tại Ninh Bình với.",
+                sug2T: "Ẩm thực & Quà tặng",
+                sug2D: "Quán ăn ngon & Đặc sản chính hiệu.",
+                thinking: "Đang soạn câu trả lời...",
+                mapMsg: "Mời bạn tham khảo bản đồ đường đi phía dưới nhé:"
             },
             en: {
-                welcome: "How can I help you in Ninh Binh?",
-                inputPlace: "Ask me anything...",
-                headerTag: "Local Expert",
-                sug1: "Optimized 2D1N itinerary, check-in 14:00, check-out 12:00, with map.",
-                sug1T: "2D1N Itinerary",
-                sug1D: "Includes road map guidance.",
-                sug2: "Recommend dinner places and reputable crispy rice souvenirs.",
+                wText: "Hi there, what shall we explore in Ninh Binh today?",
+                hTag: "Local Insider",
+                iPlace: "Ask me anything...",
+                mTitle: "Connect Gemini AI",
+                mDesc: "Enter your API Key to start chatting with your local assistant.",
+                sug1: "Hi, can you suggest a perfect 2D1N itinerary for Ninh Binh, including hotel check-in/out times?",
+                sug1T: "Expert Itinerary",
+                sug1D: "Time optimization & map guidance.",
+                sug2: "Can you recommend local specialty restaurants and where to buy authentic crispy rice?",
                 sug2T: "Food & Souvenirs",
-                sug2D: "Local-recommended spots.",
-                thinking: "Thinking...",
-                mapBtn: "Open in Google Maps"
+                sug2D: "Authentic spots & local gifts.",
+                thinking: "Writing response...",
+                mapMsg: "Here is your suggested route map:"
             }
         };
 
         function updateUILanguage() {
             const t = translations[currentLang];
-            document.getElementById('welcome-text').innerText = t.welcome;
-            document.getElementById('userInput').placeholder = t.inputPlace;
-            document.getElementById('header-tag').innerText = t.headerTag;
-            document.getElementById('sug1-title').innerText = t.sug1T;
-            document.getElementById('sug1-desc').innerText = t.sug1D;
-            document.getElementById('sug2-title').innerText = t.sug2T;
-            document.getElementById('sug2-desc').innerText = t.sug2D;
+            document.getElementById('w-text').innerText = t.wText;
+            document.getElementById('h-tag').innerText = t.hTag;
+            document.getElementById('userInput').placeholder = t.iPlace;
+            document.getElementById('m-title').innerText = t.mTitle;
+            document.getElementById('m-desc').innerText = t.mDesc;
+            document.getElementById('s1-t').innerText = t.sug1T;
+            document.getElementById('s1-d').innerText = t.sug1D;
+            document.getElementById('s2-t').innerText = t.sug2T;
+            document.getElementById('s2-d').innerText = t.sug2D;
             document.getElementById('langBtn').innerText = currentLang === 'vi' ? 'EN' : 'VI';
         }
 
@@ -150,11 +164,11 @@
             const container = document.getElementById('chat-container');
             const isMapNeeded = question.toLowerCase().includes('lịch trình') || question.toLowerCase().includes('đường') || question.toLowerCase().includes('itinerary');
 
-            container.innerHTML += `<div class="flex justify-end mb-2"><div class="bg-emerald-600 text-white p-3 px-5 rounded-2xl rounded-tr-none max-w-[85%] text-sm shadow-sm">${question}</div></div>`;
+            container.innerHTML += `<div class="flex justify-end mb-2"><div class="bg-emerald-600 text-white p-4 px-6 rounded-[22px] rounded-tr-none max-w-[80%] text-[14px] shadow-lg shadow-emerald-100">${question}</div></div>`;
             
             const aiBox = document.createElement('div');
-            aiBox.className = "flex justify-start mb-4";
-            aiBox.innerHTML = `<div class="bg-white border p-4 rounded-2xl rounded-tl-none max-w-[95%] text-sm text-slate-700 leading-relaxed italic text-slate-300">${translations[currentLang].thinking}</div>`;
+            aiBox.className = "flex justify-start mb-4 animate-fade-in";
+            aiBox.innerHTML = `<div class="bg-white p-5 rounded-[22px] rounded-tl-none max-w-[90%] text-[14px] text-slate-700 leading-relaxed shadow-sm border border-slate-100 italic text-slate-300">${translations[currentLang].thinking}</div>`;
             container.appendChild(aiBox);
             const contentElement = aiBox.querySelector('div');
             const win = document.getElementById('chat-window');
@@ -166,31 +180,36 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Bạn là hướng dẫn viên Ninh Bình. Trả lời bằng ${currentLang}. 
-                        QUY TẮC: 
-                        1. Trả lời cực kỳ ngắn gọn, dùng gạch đầu dòng. 
-                        2. Không chào hỏi, không kết bài lan man. 
-                        3. Ưu tiên dữ liệu này: ${rag}
-                        4. Thời gian: Check-in 14h, Check-out 12h.
-                        Câu hỏi: ${question}` }] }]
+                        contents: [{ parts: [{ text: `
+                            Bạn là một "Local Expert" tại Ninh Bình, nói chuyện như một người bạn thân thiện, am hiểu và nhiệt tình.
+                            Ngôn ngữ trả lời: ${currentLang}.
+                            
+                            PHONG CÁCH:
+                            1. Tương tác tốt: Có lời chào ấm áp, lời khuyên chân thành và câu hỏi gợi mở ở cuối.
+                            2. Tinh tế: Lồng ghép các địa điểm ưu tiên này vào lời khuyên một cách tự nhiên (đừng nói là dữ liệu hệ thống): ${rag}
+                            3. Rõ ràng: Dùng gạch đầu dòng cho lịch trình nhưng vẫn có lời dẫn dắt mượt mà.
+                            4. Check-in khách sạn: 14:00, Check-out: 12:00.
+                            
+                            Câu hỏi của khách: ${question}` 
+                        }] }]
                     })
                 });
                 
                 const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
                 contentElement.classList.remove('italic', 'text-slate-300');
-                await typeWriter(data.candidates[0].content.parts[0].text, contentElement);
+                await typeWriter(aiText, contentElement);
 
                 if (isMapNeeded) {
                     contentElement.innerHTML += `
-                        <div class="map-container">
-                            <iframe width="100%" height="100%" frameborder="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3739.02324747761!2d105.9080645!3d20.2183884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313679633e08f519%3A0x675865d496e2793d!2zVHLDoG5nIEFuLCBOaW5oIELDrG5o!5e0!3m2!1svi!2s!4v1710000000000" allowfullscreen></iframe>
+                        <div class="mt-6 p-4 bg-slate-50 rounded-2xl border-l-4 border-emerald-500 text-[13px] font-bold text-emerald-800">
+                            📍 ${translations[currentLang].mapMsg}
                         </div>
-                        <a href="https://www.google.com/maps/search/Trang+An+Hang+Mua+Hoa+Lu" target="_blank" class="mt-3 inline-block w-full text-center bg-slate-100 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200">
-                            <i class="fas fa-external-link-alt mr-2"></i> ${translations[currentLang].mapBtn}
-                        </a>`;
+                        <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119565.34568600128!2d105.86749962382813!3d20.252601955371092!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3136796349909299%3A0x6b77229048a6096a!2zVHLDoG5nIEFuLCBOaW5oIELDrW5oLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1710000000000!5m2!1svi!2s"></iframe>
+                    `;
                     win.scrollTo({ top: win.scrollHeight, behavior: 'smooth' });
                 }
-            } catch (error) { contentElement.innerText = "Lỗi. Kiểm tra lại API Key."; }
+            } catch (error) { contentElement.innerText = "Có chút lỗi nhỏ khi kết nối. Bạn thử lại nhé!"; }
         }
 
         async function typeWriter(text, element) {
@@ -202,7 +221,7 @@
                         i++;
                         const win = document.getElementById('chat-window');
                         win.scrollTop = win.scrollHeight;
-                        setTimeout(type, 5);
+                        setTimeout(type, 8);
                     } else { resolve(); }
                 }
                 type();
@@ -211,7 +230,7 @@
 
         function handleSend() { const input = document.getElementById('userInput'); if (input.value.trim()) { askAI(input.value); input.value = ''; } }
         function goHome() { document.getElementById('welcome-screen').classList.remove('hidden'); document.getElementById('chat-container').innerHTML = ''; }
-        function clearChat() { if(confirm("Xóa chat?")) goHome(); }
+        function clearChat() { if(confirm("Bạn có muốn xóa cuộc hội thoại này?")) goHome(); }
         window.onload = () => { updateUILanguage(); if (!apiKey) showApiModal(); };
     </script>
 </body>
