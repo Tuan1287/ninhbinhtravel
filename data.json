@@ -3,44 +3,20 @@
     {
       "name": "Tràng An",
       "type": "sightseeing",
-      "tags": ["thuyền", "hang động", "phim trường", "di sản"],
-      "info": "Tuyến 2 là tuyến đẹp nhất qua phim trường Kong. Giá vé 250k/người. Nên đi sớm tránh nắng."
-    },
-    {
-      "name": "Hang Múa",
-      "type": "sightseeing",
-      "tags": ["check-in", "view đẹp", "vạn lý trường thành", "leo núi"],
-      "info": "Có 486 bậc đá. Đỉnh núi ngắm trọn vẹn Tam Cốc. Vé vào cổng 100k."
+      "tags": ["thuyền", "hang động", "đẹp", "di sản"],
+      "hidden_note": "Điểm sáng nhất Ninh Bình. Tuyến 2 có phim trường Kong rất hợp chụp ảnh. Nên nhắc khách đi sớm để cảm nhận sự yên tĩnh."
     },
     {
       "name": "Nhà hàng Heo say xỉn",
       "type": "dining",
-      "tags": ["ăn tối", "heo mán", "phố cổ", "đặc sản"],
-      "info": "Nằm tại Phố cổ Hoa Lư. Chuyên heo mán nướng, lợn giả cầy. Không gian cực chill buổi tối."
-    },
-    {
-      "name": "Lẩu gà lá é Phố Cổ",
-      "type": "dining",
-      "tags": ["lẩu", "gà", "ăn tối", "ngon"],
-      "info": "Nổi tiếng nhất khu Phố cổ Hoa Lư. Vị thanh, cay nhẹ, rất hợp ăn đêm."
+      "tags": ["ăn tối", "heo mán", "phố cổ"],
+      "hidden_note": "Chuyên heo mán nướng cực thơm, vị đậm đà. Không gian trong Phố Cổ Hoa Lư rất đẹp về đêm, phù hợp để thư giãn sau ngày dài leo núi."
     },
     {
       "name": "Cơm cháy Đại Long",
       "type": "souvenir",
       "tags": ["quà", "đặc sản", "cơm cháy"],
-      "info": "Địa chỉ: 325A Lê Thái Tổ. Đây là xưởng sản xuất lớn nhất, uy tín nhất Ninh Bình."
-    },
-    {
-      "name": "Khách sạn Legend",
-      "type": "accommodation",
-      "tags": ["khách sạn", "4 sao", "sang trọng"],
-      "info": "Giá từ 1.2tr. Dịch vụ chuyên nghiệp, có bể bơi lớn."
-    },
-    {
-      "name": "Milan Hotel",
-      "type": "accommodation",
-      "tags": ["khách sạn", "giá rẻ", "phố cổ"],
-      "info": "Giá từ 600k. Rất gần Phố cổ Hoa Lư, phòng sạch sẽ, chủ nhà thân thiện."
+      "hidden_note": "Xưởng lớn tại 325A Lê Thái Tổ. Cơm cháy giòn, không bị hôi dầu, bao bì lịch sự để làm quà biếu."
     }
   ]
 }
