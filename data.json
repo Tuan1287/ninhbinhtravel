@@ -2,33 +2,39 @@
   "ninh_binh_data": [
     {
       "name": "Tràng An",
-      "type": "sightseeing",
-      "tags": ["thuyền", "hang động", "di sản"],
-      "hidden_note": "Giá vé: 300.000 VNĐ. Nên đi Tuyến 2 hoặc 3. Thời gian đi thuyền khoảng 2.5 - 3 tiếng. Rất gần Hang Múa (khoảng 4km)."
+      "price": "300.000 VNĐ",
+      "note": "Đi thuyền 3 tiếng, Tuyến 2 là đẹp nhất. Gần Hang Múa."
     },
     {
       "name": "Hang Múa",
-      "type": "sightseeing",
-      "tags": ["check-in", "view đẹp", "leo núi"],
-      "hidden_note": "Giá vé: 150.000 VNĐ. Có 486 bậc đá. View toàn cảnh Tam Cốc từ trên cao. Nên đi sáng sớm hoặc sau 16h để tránh nắng."
+      "price": "150.000 VNĐ",
+      "note": "Leo 486 bậc thang, ngắm toàn cảnh Tam Cốc. Nên đi sớm."
     },
     {
-      "name": "Tam Cốc - Bích Động",
-      "type": "sightseeing",
-      "tags": ["thuyền", "đồng lúa", "phim trường"],
-      "hidden_note": "Giá vé + Thuyền: 250.000 VNĐ. Đẹp nhất vào mùa lúa chín (tháng 5-6). Gần Phố Cổ Hoa Lư."
+      "name": "Tam Cốc",
+      "price": "250.000 VNĐ",
+      "note": "Đi thuyền trên sông Ngô Đồng. Đẹp nhất mùa lúa chín."
     },
     {
       "name": "Chùa Bái Đính",
-      "type": "sightseeing",
-      "tags": ["tâm linh", "chùa lớn", "kỷ lục"],
-      "hidden_note": "Vào cổng miễn phí. Xe điện: 60.000 VNĐ/vòng. Vé tham quan Bảo tháp: 50.000 VNĐ. Rất rộng, nên dành ít nhất 3 tiếng."
+      "price": "Xe điện 60.000 VNĐ",
+      "note": "Miễn phí vào cổng, chỉ tính phí xe điện và bảo tháp."
     },
     {
-      "name": "Tuyệt Tình Cốc (Động Am Tiên)",
+      "name": "Cố đô Hoa Lư",
+      "price": "20.000 VNĐ",
+      "note": "Di tích lịch sử đền vua Đinh, vua Lê."
+    },
+    {
+      "name": "Thung Nham",
+      "price": "250.000 VNĐ",
+      "note": "Vườn chim tự nhiên, đi thuyền hang Bụt."
+    },
+    {
+      "name": "Tuyệt Tịnh Cốc (Động Am Tiên)",
       "type": "sightseeing",
       "tags": ["chụp ảnh", "hồ nước", "lịch sử"],
-      "hidden_note": "Giá vé: 50.000 VNĐ. Không gian yên tĩnh, phong cảnh sơn thủy hữu tình, ngay cạnh Cố đô Hoa Lư."
+      "hidden_note": "Giá vé: 100.000 VNĐ. Không gian yên tĩnh, phong cảnh sơn thủy hữu tình, ngay cạnh Cố đô Hoa Lư."
     },
     {
       "name": "Vườn Quốc gia Cúc Phương",
