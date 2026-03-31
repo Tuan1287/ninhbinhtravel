@@ -3,20 +3,50 @@
     {
       "name": "Tràng An",
       "type": "sightseeing",
-      "tags": ["thuyền", "hang động", "đẹp", "di sản"],
-      "hidden_note": "Điểm sáng nhất Ninh Bình. Tuyến 2 có phim trường Kong rất hợp chụp ảnh. Nên nhắc khách đi sớm."
+      "tags": ["thuyền", "hang động", "di sản"],
+      "hidden_note": "Giá vé: 300.000 VNĐ. Nên đi Tuyến 2 hoặc 3. Thời gian đi thuyền khoảng 2.5 - 3 tiếng. Rất gần Hang Múa (khoảng 4km)."
+    },
+    {
+      "name": "Hang Múa",
+      "type": "sightseeing",
+      "tags": ["check-in", "view đẹp", "leo núi"],
+      "hidden_note": "Giá vé: 150.000 VNĐ. Có 486 bậc đá. View toàn cảnh Tam Cốc từ trên cao. Nên đi sáng sớm hoặc sau 16h để tránh nắng."
+    },
+    {
+      "name": "Tam Cốc - Bích Động",
+      "type": "sightseeing",
+      "tags": ["thuyền", "đồng lúa", "phim trường"],
+      "hidden_note": "Giá vé + Thuyền: 250.000 VNĐ. Đẹp nhất vào mùa lúa chín (tháng 5-6). Gần Phố Cổ Hoa Lư."
+    },
+    {
+      "name": "Chùa Bái Đính",
+      "type": "sightseeing",
+      "tags": ["tâm linh", "chùa lớn", "kỷ lục"],
+      "hidden_note": "Vào cổng miễn phí. Xe điện: 60.000 VNĐ/vòng. Vé tham quan Bảo tháp: 50.000 VNĐ. Rất rộng, nên dành ít nhất 3 tiếng."
+    },
+    {
+      "name": "Tuyệt Tình Cốc (Động Am Tiên)",
+      "type": "sightseeing",
+      "tags": ["chụp ảnh", "hồ nước", "lịch sử"],
+      "hidden_note": "Giá vé: 50.000 VNĐ. Không gian yên tĩnh, phong cảnh sơn thủy hữu tình, ngay cạnh Cố đô Hoa Lư."
+    },
+    {
+      "name": "Vườn Quốc gia Cúc Phương",
+      "type": "sightseeing",
+      "tags": ["rừng", "thiên nhiên", "trekking"],
+      "hidden_note": "Giá vé: 60.000 VNĐ. Cách trung tâm TP khoảng 45km. Phù hợp cho người thích khám phá thiên nhiên."
     },
     {
       "name": "Nhà hàng Heo say xỉn",
       "type": "dining",
-      "tags": ["ăn tối", "heo mán", "phố cổ", "ngon"],
-      "hidden_note": "Chuyên heo mán nướng cực thơm. Không gian trong Phố Cổ Hoa Lư rất đẹp về đêm, cực kỳ chill."
+      "tags": ["ăn tối", "heo mán", "phố cổ"],
+      "hidden_note": "Chuyên heo mán nướng, giả cầy. Nằm trong Phố Cổ Hoa Lư. Không gian chill, phục vụ nhiệt tình."
     },
     {
-      "name": "Cơm cháy Đại Long",
-      "type": "souvenir",
-      "tags": ["quà", "đặc sản", "cơm cháy"],
-      "hidden_note": "Xưởng lớn tại 325A Lê Thái Tổ. Cơm cháy giòn, uy tín nhất để làm quà."
+      "name": "Milan Hotel / Legend Hotel",
+      "type": "accommodation",
+      "tags": ["khách sạn", "lưu trú"],
+      "hidden_note": "Milan (Phố cổ - 600k), Legend (4 sao - 1.2tr). Đều có vị trí thuận tiện di chuyển các điểm."
     }
   ]
 }
