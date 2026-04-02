@@ -1,5 +1,6 @@
 [
-  {"ten": "O Zoli Home", "gia": "580.000 - 750.000", "vi_tri": "Gần Phố Cổ Hoa Lư", "uu_diem": "Sân thượng view đẹp, gần trung tâm."},
-  {"ten": "C'Lau Hotel", "gia": "800.000 - 1.050.000", "vi_tri": "Trung tâm Phố Cổ", "uu_diem": "Vị trí đẹp nhất, phòng hiện đại."},
-  {"ten": "D.RESIDENCE", "gia": "540.000 - 700.000", "vi_tri": "Cách Phố Cổ 0.6km", "uu_diem": "Giá rẻ, sạch sẽ, có buffet sáng."}
+  {"ten": "O Zoli Home", "gia": "580.000 - 750.000 VNĐ", "vi_tri": "~0.24 km từ Phố Cổ", "uu_diem": "Sân thượng view đẹp, gần trung tâm."},
+  {"ten": "C'Lau Hotel", "gia": "800.000 - 1.050.000 VNĐ", "vi_tri": "Trung tâm Phố Cổ", "uu_diem": "Vị trí đẹp nhất, có nhà hàng sân thượng."},
+  {"ten": "MT Collection Hotel", "gia": "750.000 - 950.000 VNĐ", "vi_tri": "~0.44 km từ Phố Cổ", "uu_diem": "Bữa sáng miễn phí, hiện đại."},
+  {"ten": "D.RESIDENCE HOTEL", "gia": "540.000 - 700.000 VNĐ", "vi_tri": "~0.64 km từ Phố Cổ", "uu_diem": "Giá rẻ, sạch sẽ, có buffet sáng."}
 ]
