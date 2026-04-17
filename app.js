@@ -239,7 +239,7 @@ async function handleSend(text, els) {
 
 async function callGemini(userText) {
   // FIX: Use correct endpoint without alt=sse
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${state.apiKey}`;
   
   const history = state.messages.slice(-4).map(m => ({
     role: m.role === 'user' ? 'user' : 'model',
