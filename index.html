@@ -9,30 +9,29 @@
 <body>
   <header>
     <div class="weather-badge" id="weather-badge">🌤️ Loading...</div>
-    <h1>Ninh Bình Travel</h1>
+    <h1 id="site-title">Ninh Bình Travel</h1>
     <div class="header-actions">
-      <button id="lang-toggle" class="lang-btn" aria-label="Chuyển ngôn ngữ">VI / EN</button>
-      <span class="disclaimer">thông tin mang tính chất tham khảo</span>
+      <button id="lang-toggle" class="lang-btn">VI / EN</button>
+      <span class="disclaimer" id="disclaimer">thông tin mang tính chất tham khảo</span>
       <button id="clear-chat" aria-label="Xóa trò chuyện">🗑️</button>
     </div>
   </header>
 
   <main>
     <section id="api-panel">
-      <input type="password" id="api-key" placeholder="Nhập Gemini API Key mới của bạn..." autocomplete="off">
+      <input type="password" id="api-key" placeholder="Nhập Gemini API Key..." autocomplete="off">
       <button id="api-save" class="btn primary">Lưu Key</button>
       <p id="api-status" class="status"></p>
     </section>
 
-    <section id="chat-container" role="log" aria-live="polite">
+    <section id="chat-container">
       <div id="messages"></div>
       
-      <!-- Gợi ý nhanh -->
       <div id="suggestions" class="suggestions-grid">
-        <button class="chip" data-msg="👩‍❤️‍👨 Gợi ý chương trình 2N1Đ cho couple/gia đình">👩‍❤️‍👨 Couple/Gia đình</button>
-        <button class="chip" data-msg="💰 Lịch trình ngân sách khoảng 2 triệu/người">💰 Ngân sách ~2 triệu</button>
-        <button class="chip" data-msg="⚡ Chương trình trốn phố 24h tại Ninh Bình">⚡ Trốn phố 24h</button>
-        <button class="chip" data-msg="🏍️ Lịch trình xe máy tự túc 2 ngày 1 đêm">🏍️ Xe máy tự túc</button>
+        <button class="chip" data-msg="couple">👩‍❤️‍👨 Couple/Gia đình 2N1Đ</button>
+        <button class="chip" data-msg="budget">💰 Ngân sách ~2 triệu</button>
+        <button class="chip" data-msg="escape">⚡ Trốn phố 24h</button>
+        <button class="chip" data-msg="motorbike">🏍️ Xe máy tự túc</button>
       </div>
 
       <div id="loading" class="hidden">
@@ -40,9 +39,9 @@
       </div>
     </section>
 
-    <form id="input-form" autocomplete="off">
-      <textarea id="user-input" rows="2" placeholder="Hỏi về lịch trình Ninh Bình..." required></textarea>
-      <button type="submit" id="send-btn" class="btn accent" aria-label="Gửi">
+    <form id="input-form">
+      <textarea id="user-input" rows="2" placeholder="Hỏi về Ninh Bình..." required></textarea>
+      <button type="submit" id="send-btn" class="btn accent">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
       </button>
     </form>
