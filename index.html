@@ -1,217 +1,40 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ninh Bình AI - Local Guide</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600;700&display=swap');
-        body { font-family: 'Lexend', sans-serif; background-color: #f9fafb; height: 100vh; display: flex; flex-direction: column; }
-        .chat-bubble b { color: #047857; font-weight: 600; }
-        .map-frame { width: 100%; height: 350px; border-radius: 24px; margin-top: 15px; border: 1px solid #e5e7eb; }
-        #chat-window::-webkit-scrollbar { width: 4px; }
-        #chat-window::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
-        .limit-pill { background: #fee2e2; color: #ef4444; padding: 2px 10px; border-radius: 20px; font-size: 10px; font-weight: 700; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Chatbot tư vấn lịch trình du lịch Ninh Bình 2 ngày 1 đêm">
+  <title>Ninh Bình Travel</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-slate-800">
+<body>
+  <header>
+    <h1 id="site-title">Ninh Bình Travel</h1>
+    <button id="lang-toggle" aria-label="Chuyển đổi ngôn ngữ">VI / EN</button>
+  </header>
 
-    <header class="h-16 flex justify-between items-center bg-white/90 backdrop-blur-md border-b px-4 sm:px-8 shrink-0 z-50 sticky top-0">
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
-            <div class="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-white"><i class="fas fa-map-marker-alt"></i></div>
-            <h1 class="text-lg font-bold text-emerald-900 hidden sm:block">Ninh Bình AI</h1>
-        </div>
-        
-        <div class="flex items-center space-x-3">
-            <span class="limit-pill" id="limit-tag">Giới hạn 10 câu hỏi</span>
-            <span id="ref-text" class="text-[10px] text-slate-400 italic hidden lg:block">Thông tin mang tính chất tham khảo</span>
-            <button onclick="clearChat()" class="p-2 text-red-400 hover:text-red-600 transition"><i class="fas fa-trash-alt"></i></button>
-            <button onclick="showApiModal()" class="p-2 text-slate-400"><i class="fas fa-cog"></i></button>
-            <button onclick="toggleLang()" id="langBtn" class="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-bold">EN</button>
-        </div>
-    </header>
+  <main>
+    <section id="api-panel">
+      <input type="password" id="api-key" placeholder="Nhập Gemini API Key của bạn..." autocomplete="off">
+      <button id="api-save" class="btn">Lưu</button>
+      <p id="api-status" class="status"></p>
+    </section>
 
-    <main class="max-w-4xl mx-auto w-full flex-1 flex flex-col overflow-hidden relative">
-        <div id="chat-window" class="flex-1 overflow-y-auto px-4 pt-8 pb-32">
-            <div id="welcome-screen" class="text-center py-6 animate-fade-in">
-                <h2 id="w-title" class="text-3xl font-bold text-slate-900 mb-2">Đi đâu ở Ninh Bình hôm nay?</h2>
-                <p id="w-sub" class="text-slate-500 text-sm mb-10">Tư vấn lịch trình, khách sạn và món ngon bản địa.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                    <button onclick="askAI(translations[currentLang].sug1)" class="p-6 bg-white border rounded-[2rem] text-left hover:shadow-xl hover:border-emerald-500 transition-all">
-                        <i class="fas fa-compass text-emerald-500 mb-3 block text-xl"></i>
-                        <div id="s1-t" class="font-bold">Lịch trình 2 ngày gợi ý</div>
-                        <div id="s1-d" class="text-[11px] text-slate-400 mt-1">Tràng An, Hang Múa và các điểm lân cận.</div>
-                    </button>
-                    <button onclick="askAI(translations[currentLang].sug2)" class="p-6 bg-white border rounded-[2rem] text-left hover:shadow-xl hover:border-orange-500 transition-all">
-                        <i class="fas fa-heart text-orange-500 mb-3 block text-xl"></i>
-                        <div id="s2-t" class="font-bold">Chỗ ở & Quán ăn tốt nhất</div>
-                        <div id="s2-d" class="text-[11px] text-slate-400 mt-1">Dựa trên danh sách ưu tiên tại Ninh Bình.</div>
-                    </button>
-                </div>
-            </div>
-            <div id="chat-container" class="space-y-8"></div>
-        </div>
+    <section id="chat-container" role="log" aria-live="polite">
+      <div id="messages"></div>
+      <div id="loading" class="hidden" aria-label="Đang tạo phản hồi...">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </section>
 
-        <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-gray-50 via-white/90 to-transparent">
-            <div class="max-w-2xl mx-auto bg-white border shadow-xl rounded-2xl p-1 flex items-center">
-                <input type="text" id="userInput" class="flex-1 p-3 outline-none text-sm font-medium" onkeypress="if(event.key === 'Enter') handleSend()">
-                <button onclick="handleSend()" class="bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-200 transition active:scale-95">
-                    <i class="fas fa-paper-plane text-xs"></i>
-                </button>
-            </div>
-        </div>
-    </main>
+    <form id="input-form" autocomplete="off">
+      <textarea id="user-input" rows="2" placeholder="Hỏi về lịch trình 2 ngày 1 đêm tại Ninh Bình..." required></textarea>
+      <button type="submit" id="send-btn" class="btn" aria-label="Gửi tin nhắn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      </button>
+    </form>
+  </main>
 
-    <div id="api-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[100] hidden p-4">
-        <div class="bg-white p-8 rounded-[2rem] max-w-sm w-full shadow-2xl">
-            <h3 class="text-xl font-bold mb-4 text-center">Cấu hình hệ thống</h3>
-            <p class="text-xs text-slate-400 mb-4 text-center">Dán API Key của bạn để bắt đầu sử dụng.</p>
-            <input type="password" id="api-input" class="w-full p-4 bg-slate-50 border rounded-2xl mb-4 text-center outline-none focus:ring-2 focus:ring-emerald-500">
-            <button onclick="saveApiKey()" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold shadow-lg">Lưu cấu hình</button>
-        </div>
-    </div>
-
-    <script>
-        let apiKey = localStorage.getItem('gemini_api_key') || '';
-        let currentLang = 'vi';
-        let chatHistory = [];
-        let questionCount = 0;
-
-        const translations = {
-            vi: {
-                wTitle: "Đi đâu ở Ninh Bình hôm nay?", wSub: "Tư vấn lịch trình, khách sạn và món ngon bản địa.",
-                s1t: "Lịch trình 2 ngày gợi ý", s1d: "Tràng An, Hang Múa và các điểm lân cận.",
-                s2t: "Chỗ ở & Quán ăn tốt nhất", s2d: "Dựa trên danh sách ưu tiên tại Ninh Bình.",
-                ref: "Thông tin mang tính chất tham khảo", limit: "Giới hạn 10 câu hỏi",
-                place: "Nhắn tin cho cố vấn Ninh Bình...", thinking: "Đang sắp xếp lịch trình...",
-                sug1: "Mình muốn đi Ninh Bình 2 ngày 1 đêm, bạn gợi ý lịch trình đi Tràng An, Hang Múa và tìm chỗ ở, chỗ ăn nào tiện di chuyển nhất nhé?",
-                sug2: "Cho mình danh sách các khách sạn gần Phố Cổ và những quán ăn dê núi ngon mà giá hợp lý.",
-                done: "Bạn đã hết lượt hỏi cho phiên này. Hãy xóa hội thoại để bắt đầu lại!"
-            },
-            en: {
-                wTitle: "Where to go in Ninh Binh today?", wSub: "Expert advice on itineraries, hotels, and local food.",
-                s1t: "Suggested 2-Day Plan", s1d: "Trang An, Mua Cave, and nearby spots.",
-                s2t: "Best Stays & Eats", s2d: "Based on priority lists in Ninh Binh.",
-                ref: "Information for reference only", limit: "10-Question Limit",
-                place: "Message your Ninh Binh guide...", thinking: "Planning your trip...",
-                sug1: "I want a 2D1N trip to Trang An and Mua Cave. Suggest the best stays and restaurants nearby.",
-                sug2: "Show me hotels near the Old Quarter and good goat meat restaurants with reasonable prices.",
-                done: "You've reached the limit. Clear chat to start a new session!"
-            }
-        };
-
-        function updateUI() {
-            const t = translations[currentLang];
-            document.getElementById('w-title').innerText = t.wTitle;
-            document.getElementById('w-sub').innerText = t.wSub;
-            document.getElementById('s1-t').innerText = t.s1t;
-            document.getElementById('s1-d').innerText = t.s1d;
-            document.getElementById('s2-t').innerText = t.s2t;
-            document.getElementById('s2-d').innerText = t.s2d;
-            document.getElementById('ref-text').innerText = t.ref;
-            document.getElementById('limit-tag').innerText = t.limit;
-            document.getElementById('userInput').placeholder = t.place;
-            document.getElementById('langBtn').innerText = currentLang === 'vi' ? 'EN' : 'VI';
-        }
-
-        function toggleLang() { currentLang = currentLang === 'vi' ? 'en' : 'vi'; updateUI(); }
-        function showApiModal() { document.getElementById('api-modal').classList.remove('hidden'); }
-        function saveApiKey() {
-            const val = document.getElementById('api-input').value.trim();
-            if(val) { apiKey = val; localStorage.setItem('gemini_api_key', val); document.getElementById('api-modal').classList.add('hidden'); }
-        }
-
-        async function fetchAllData() {
-            try {
-                const [kd, lt, nh] = await Promise.all([
-                    fetch('khudiem.json').then(r => r.json()),
-                    fetch('luutru.json').then(r => r.json()),
-                    fetch('nhahang.json').then(r => r.json())
-                ]);
-                return `DANH SÁCH KHU ĐIỂM: ${JSON.stringify(kd)}\nDANH SÁCH LƯU TRÚ: ${JSON.stringify(lt)}\nDANH SÁCH NHÀ HÀNG: ${JSON.stringify(nh)}`;
-            } catch (e) { return ""; }
-        }
-
-        async function askAI(question) {
-            if(!apiKey) return showApiModal();
-            if(questionCount >= 10) return alert(translations[currentLang].done);
-
-            document.getElementById('welcome-screen').classList.add('hidden');
-            const container = document.getElementById('chat-container');
-            
-            container.innerHTML += `<div class="flex justify-end"><div class="bg-emerald-600 text-white p-4 rounded-3xl rounded-tr-none max-w-[85%] text-sm shadow-lg">${question}</div></div>`;
-            
-            const aiBox = document.createElement('div');
-            aiBox.className = "flex justify-start";
-            aiBox.innerHTML = `<div class="bg-white p-5 rounded-3xl rounded-tl-none max-w-[95%] text-sm text-slate-700 shadow-sm border border-slate-100 italic text-slate-300 chat-bubble">${translations[currentLang].thinking}</div>`;
-            container.appendChild(aiBox);
-            const contentElement = aiBox.querySelector('div');
-            const win = document.getElementById('chat-window');
-            win.scrollTo({ top: win.scrollHeight, behavior: 'smooth' });
-
-            try {
-                const combinedData = await fetchAllData();
-                const systemPrompt = {
-                    role: "user",
-                    parts: [{ text: `
-                        BẠN LÀ CHUYÊN GIA BẢN ĐỊA NINH BÌNH. TRẢ LỜI BẰNG ${currentLang}.
-                        DỮ LIỆU ĐANG CÓ: ${combinedData}
-                        
-                        PHONG CÁCH TƯ VẤN:
-                        - Tuyệt đối KHÔNG liệt kê dạng danh sách khô khan hay dùng dấu sao (**).
-                        - Hãy nói chuyện tự nhiên như một người bạn: "Đầu tiên mình khuyên bạn...", "Tiện đường ghé qua...", "Buổi tối thì không gì bằng...".
-                        - Sử dụng Emoji tinh tế (📍, 🛵, 🍲, ✨).
-                        - Nếu gợi ý khách sạn, hãy gắn liền với lý do tại sao nó tiện cho lịch trình.
-                        - Nhớ kết nối với nội dung đã nói ở các câu trước trong lịch sử chat.
-                        
-                        CÂU HỎI: ${question}` }]
-                };
-
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [...chatHistory.slice(-18), systemPrompt] }) // Giữ 9 câu hỏi trước đó + 1 câu hiện tại = 20 messages
-                });
-                
-                const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
-                
-                chatHistory.push(systemPrompt);
-                chatHistory.push({ role: "model", parts: [{ text: aiText }] });
-                questionCount++;
-
-                contentElement.classList.remove('italic', 'text-slate-300');
-                await typeWriter(aiText, contentElement);
-
-                if (question.toLowerCase().includes('lịch trình') || question.toLowerCase().includes('itinerary')) {
-                    contentElement.innerHTML += `<iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d59740.34752661571!2d105.89518501255567!3d20.22676735579997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1zVHLDoG5nIEFuLCBIYW5nIE3DumEsIFBo4buRIEPhu5UgSG9hIEzGsA!5e0!3m2!1svi!2s!4v17111111111113"></iframe>`;
-                    win.scrollTo({ top: win.scrollHeight, behavior: 'smooth' });
-                }
-            } catch (error) { contentElement.innerText = "Có lỗi xảy ra, hãy thử lại!"; }
-        }
-
-        async function typeWriter(text, element) {
-            let i = 0; element.innerHTML = "";
-            return new Promise((resolve) => {
-                function type() {
-                    if (i < text.length) {
-                        element.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
-                        i++;
-                        const win = document.getElementById('chat-window');
-                        win.scrollTop = win.scrollHeight;
-                        setTimeout(type, 5);
-                    } else { resolve(); }
-                }
-                type();
-            });
-        }
-
-        function handleSend() { const input = document.getElementById('userInput'); if (input.value.trim()) { askAI(input.value); input.value = ''; } }
-        function goHome() { document.getElementById('welcome-screen').classList.remove('hidden'); document.getElementById('chat-container').innerHTML = ''; chatHistory = []; questionCount = 0; }
-        function clearChat() { if(confirm("Xóa hội thoại và bắt đầu lượt hỏi mới?")) goHome(); }
-        window.onload = () => { updateUI(); if (!apiKey) showApiModal(); };
-    </script>
+  <script src="app.js"></script>
 </body>
 </html>
